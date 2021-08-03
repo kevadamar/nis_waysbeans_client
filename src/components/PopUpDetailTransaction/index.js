@@ -1,127 +1,175 @@
 import {
   Box,
+  CircularProgress,
   Dialog,
   DialogContent,
   DialogTitle,
   Divider,
-  Grid,
   Typography,
 } from '@material-ui/core';
-import React from 'react';
-import { formatNumberToIDR } from '../../Helpers';
+import { Skeleton } from '@material-ui/lab';
+import React, { useEffect, useState } from 'react';
+import { changeFormatDate, formatNumberToIDR } from '../../Helpers';
+import { services } from '../../services';
 import { globalStyles } from '../../styles/globalStyles';
+import { popUpStyles } from './_PopUpStyles';
 
 const inlineCss = {
   display: 'flex',
-  maxHeight: '49vh',
+  maxHeight: '55vh',
   flexDirection: 'column',
   overflow: 'auto',
 };
 
-function PopUpDetailTransaction({ show, handleClose, data }) {
+function PopUpDetailTransaction({ show, handleClose, order_id }) {
   const classes = globalStyles();
+  const localClasses = popUpStyles();
+  const [isLoading, setIsLoading] = useState(false);
+  const [data, setData] = useState('');
+  const [formatedDate, setFormatedDate] = useState({
+    dayName: '',
+    formatDate: '',
+  });
 
-  
+  const fetchData = async ({ order_id }) => {
+    setIsLoading(true);
+    const response = await services.getDetailTransaction({ order_id });
+    setFormatedDate({ ...changeFormatDate(response.createdAt) });
+    setData(response);
+
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    fetchData({ order_id });
+    return () => {
+      setData('');
+      setIsLoading(false);
+      setFormatedDate({
+        dayName: '',
+        formatDate: '',
+      });
+    };
+  }, [order_id]);
 
   return (
     <Dialog
       open={show}
       onClose={handleClose}
       aria-labelledby="form-dialog-title"
+      maxWidth="md"
     >
       <DialogTitle id="form-dialog-title">
-        <Typography variant="h5" component="h2">
-          <Box fontWeight="bold" color="#613D2B">
+        <Typography variant="h5" component="span">
+          <Box fontWeight="bold" color="#613D2B" textAlign="center">
             Detail Transaction
           </Box>
         </Typography>
       </DialogTitle>
-      <DialogContent>
+      <DialogContent className={localClasses.contentSize}>
         <Divider className={classes.identityBackgroundColor} color="#613D2B" />
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={8} style={{ ...inlineCss }}>
-            {data.detailCarts.map((myCart, index) => (
-              <Box key={index} flexGrow={1}>
-                {index === 0 && (
-                  <Divider
-                    className={classes.identityBackgroundColor}
-                    color="#613D2B"
-                  />
-                )}
-                <Box p={2} display="flex" justifyContent="space-between">
-                  <Box display="flex">
-                    <img
-                      alt={myCart.name}
-                      src={myCart.photo}
-                      width={80}
-                      height={80}
-                      style={{ cursor: 'pointer' }}
-                      onClick={
-                        () => null
-                        // router.push(`/product/${myCart.product_id}`)
-                      }
-                    />
-                    <Box display="flex" flexDirection="column">
-                      <Typography variant="h6">
-                        <Box pl={2}>{myCart.name}</Box>
+        {isLoading ? (
+          <Box textAlign="center">
+            <CircularProgress />
+          </Box>
+        ) : (
+          <Box display="flex">
+            <Box
+              style={{ ...inlineCss }}
+              display="flex"
+              flexDirection="column"
+              justifyContent="space-between"
+              flexGrow={1}
+            >
+              {data?.products?.map((product, idx) => (
+                <Box key={idx} p={1}>
+                  <Box
+                    display="flex"
+                    p={1}
+                    className={localClasses.contentCard}
+                    justifyContent="space-between"
+                  >
+                    <Box display="flex">
+                      <img alt={product.name} src={product.photo} width={80} />
+                      <Box display="flex" flexDirection="column">
+                        <Typography variant="h6">
+                          <Box
+                            pl={2}
+                            className={classes.identityColor}
+                            fontWeight="bold"
+                          >
+                            {product.name}
+                          </Box>
+                        </Typography>
+                        <Typography variant="body2">
+                          <Box display="flex">
+                            <Box
+                              pl={2}
+                              fontWeight="bold"
+                              className={classes.identityColor}
+                            >
+                              {formatedDate.dayName}
+                            </Box>
+                            <Box className={classes.identityColor}>
+                              , {formatedDate.formatDate}
+                            </Box>
+                          </Box>
+                        </Typography>
+
+                        <Typography variant="body2">
+                          <Box className={classes.identityColor} pl={2} pt={1}>
+                            Price : Rp.{formatNumberToIDR(product.price)}
+                          </Box>
+                        </Typography>
+                        <Typography variant="body2">
+                          <Box className={classes.identityColor} pl={2}>
+                            Qty : {product.orderQuantity}
+                          </Box>
+                        </Typography>
+                      </Box>
+                    </Box>
+                    <Box
+                      display="flex"
+                      flexDirection="column"
+                      alignItems="flex-end"
+                      justifyContent="flex-end"
+                    >
+                      <Typography component="span">SubTotal</Typography>
+                      <Typography component="span">
+                        <Box fontWeight="bold">
+                          Rp.
+                          {formatNumberToIDR(
+                            product.price * product.orderQuantity,
+                          )}
+                        </Box>
                       </Typography>
                     </Box>
                   </Box>
-                  <Box
-                    display="flex"
-                    flexDirection="column"
-                    alignItems="flex-end"
-                    justifyContent="center"
-                  >
-                    <Typography className={classes.identityColor}>
-                      Rp.{formatNumberToIDR(myCart.total_price)}
-                    </Typography>
-                  </Box>
                 </Box>
-                <Divider
-                  className={classes.identityBackgroundColor}
-                  color="#613D2B"
-                />
-              </Box>
-            ))}
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <Box>
-              <Divider
-                className={classes.identityBackgroundColor}
-                color="#613D2B"
-              />
-              <Box p={2}>
-                <Box justifyContent="space-between" display="flex" pb={2}>
-                  <Typography className={classes.identityColor}>
-                    Subtotal
-                  </Typography>
-                  <Typography className={classes.identityColor}>
-                    {formatNumberToIDR(250000)}
-                  </Typography>
-                </Box>
-                <Box justifyContent="space-between" display="flex">
-                  <Typography className={classes.identityColor}>Qty</Typography>
-                  <Typography className={classes.identityColor}>5</Typography>
-                </Box>
-              </Box>
-              <Divider
-                className={classes.identityBackgroundColor}
-                color="#613D2B"
-              />
-              <Box p={2}>
-                <Box justifyContent="space-between" display="flex" pb={2}>
-                  <Typography className={classes.identityColor}>
-                    <Box fontWeight="bold">Total</Box>
-                  </Typography>
-                  <Typography className={classes.identityColor}>
-                    <Box fontWeight="bold">{formatNumberToIDR(250000)}</Box>
-                  </Typography>
-                </Box>
+              ))}
+            </Box>
+            <Box flexGrow={1} p={1}>
+              <Box
+                p={1}
+                display="flex"
+                flexDirection="column"
+                alignItems="flex-end"
+                className={localClasses.contentCard}
+              >
+                <Typography component="span">
+                  <Box>Total Price</Box>
+                </Typography>
+                <Typography component="span">
+                  {data && (
+                    <Box fontWeight="bold">
+                      Rp.{formatNumberToIDR(data.totalPrice)}
+                    </Box>
+                  )}
+                </Typography>
               </Box>
             </Box>
-          </Grid>
-        </Grid>
+          </Box>
+        )}
       </DialogContent>
     </Dialog>
   );

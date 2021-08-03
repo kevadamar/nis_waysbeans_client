@@ -5,12 +5,15 @@ import {
   Grid,
   Typography,
 } from '@material-ui/core';
-import React from 'react';
-import { useQueries, useQuery } from 'react-query';
+import React, { useState } from 'react';
+import { useMutation, useQueries, useQuery } from 'react-query';
 import { services } from '../../services';
 import { globalStyles } from '../../styles/globalStyles';
 import DefaultPhoto from '../../assets/default_photo.png';
 import CardMyTransaction from '../../components/CardMyTransaction';
+import { profileStyles } from './_ProfileStyles';
+import FormProfile from '../../components/FormProfile';
+import ButtonReuse from '../../components/ButtonReuse';
 
 const inlineCss = {
   overflow: 'auto',
@@ -20,10 +23,10 @@ const inlineCss = {
 function Profile() {
   const classes = globalStyles();
 
-  // const { isLoading, data, isError, isSuccess } = useQuery(
-  //   ['profile'],
-  //   services.getMe,
-  // );
+  const localClasses = profileStyles();
+
+  const [showEdit, setShowEdit] = useState(false);
+
   const result = useQueries([
     {
       queryKey: ['profile'],
@@ -46,15 +49,41 @@ function Profile() {
     isSuccess: isSuccessTransaction,
     isError: isErrorTransaction,
     isLoading: isLoadingTransaction,
+
+    refetch: refetchTransaction,
   } = result[1];
 
-  const isSuccess = true;
+  const mutation = useMutation(services.updateStatusTransaction, {
+    onSuccess: () => {
+      refetchTransaction();
+    },
+    onError: async () => {
+      console.log('error');
+    },
+  });
 
-  console.log(result);
+  const handleCompleted = ({ order_id }) => {
+    mutation.mutate({ order_id, payload: { status: 'Success' } });
+  };
+
+  const handleCbForm = (payload) => {
+    const formData = new FormData();
+    formData.append('fullname', payload.fullname);
+    formData.append('email', payload.email);
+    if (payload.password) {
+      formData.append('password', payload.password);
+    }
+    if (payload.file) {
+      
+      formData.append('imageFile', payload.file, payload.file.name);
+    }
+
+    // mutation.mutate({ payload: formData });
+  };
 
   return (
     <Container maxWidth="md">
-      <Grid container>
+      <Grid container spacing={5}>
         <Grid item xs={12} sm={5}>
           <Typography variant="h5" className={classes.identityColor}>
             <Box fontWeight="bold">My Profile</Box>
@@ -65,30 +94,56 @@ function Profile() {
             </Box>
           )}
           {isSuccessUser && (
-            <Box mt={3} display="flex">
-              <Box>
-                <img
-                  alt={dataUser.fullname}
-                  src={!dataUser.photo ? DefaultPhoto : dataUser.photo}
-                  style={{ borderRadius: '5px' }}
-                />
-              </Box>
+            <>
+              {!showEdit ? (
+                <Box>
+                  <Box mt={3} mb={2} display="flex">
+                    <Container className={localClasses.containerImg}>
+                      <img
+                        alt={dataUser.fullname}
+                        src={!dataUser.photo ? DefaultPhoto : dataUser.photo}
+                        style={{
+                          borderRadius: '5px',
+                          height: '100%',
+                          width: '100%',
+                          objectFit: 'contain',
+                        }}
+                      />
+                    </Container>
 
-              <Box ml={3}>
-                <Typography variant="h6" className={classes.identityColor}>
-                  <Box fontWeight="bold">Full Name</Box>
-                </Typography>
-                <Typography variant="body1">
-                  <Box>{dataUser.fullname}</Box>
-                </Typography>
-                <Typography variant="h6" className={classes.identityColor}>
-                  <Box fontWeight="bold">Email</Box>
-                </Typography>
-                <Typography variant="body1">
-                  <Box>{dataUser.email}</Box>
-                </Typography>
-              </Box>
-            </Box>
+                    <Box>
+                      <Typography
+                        variant="h6"
+                        className={classes.identityColor}
+                      >
+                        <Box fontWeight="bold">Full Name</Box>
+                      </Typography>
+                      <Typography variant="body1">
+                        <Box>{dataUser.fullname}</Box>
+                      </Typography>
+                      <Typography
+                        variant="h6"
+                        className={classes.identityColor}
+                      >
+                        <Box fontWeight="bold">Email</Box>
+                      </Typography>
+                      <Typography variant="body1">
+                        <Box>{dataUser.email}</Box>
+                      </Typography>
+                    </Box>
+                  </Box>
+                  {/* <ButtonReuse
+                    variant="contained"
+                    color="primary"
+                    onClick={() => setShowEdit(true)}
+                  >
+                    update profile
+                  </ButtonReuse> */}
+                </Box>
+              ) : (
+                <FormProfile cbForm={handleCbForm} data={dataUser} />
+              )}
+            </>
           )}
         </Grid>
         <Grid item xs={12} sm={7}>
@@ -105,7 +160,10 @@ function Profile() {
               {isSuccessTransaction &&
                 dataTransaction?.transactions?.map((cart, idx) => (
                   <Box key={idx}>
-                    <CardMyTransaction myCart={cart} />
+                    <CardMyTransaction
+                      myCart={cart}
+                      handleCompleted={handleCompleted}
+                    />
                   </Box>
                 ))}
             </Box>

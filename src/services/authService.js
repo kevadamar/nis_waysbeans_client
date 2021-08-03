@@ -1,4 +1,4 @@
-import { API, configJson } from '../config';
+import { API, configFormData, configJson } from '../config';
 
 export const signIn = async ({ payload }) => {
   try {
@@ -37,6 +37,20 @@ export const getMe = async () => {
     }
 
     return response.data.data;
+  } catch (error) {
+    throw error.response.data.message;
+  }
+};
+
+export const updateUser = async ({ payload }) => {
+  try {
+    const response = await API.patch('user', payload, configFormData);
+
+    if (response.status !== 200) {
+      throw response.data.status;
+    }
+
+    return response.data.message;
   } catch (error) {
     throw error.response.data.message;
   }

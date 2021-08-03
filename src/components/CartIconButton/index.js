@@ -13,7 +13,7 @@ const CartIconButton = (props) => {
   const { state: stateUser, dispatch: dispatchUser } = useContext(UserContext);
 
   const handleCountCart = async () => {
-    const { data } = await services.countCart();
+    const data = await services.countCart();
     dispatchUser({ type: SET_CART, payload: data });
   };
 

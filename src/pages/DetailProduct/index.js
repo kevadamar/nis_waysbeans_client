@@ -66,7 +66,7 @@ const DetailProduct = () => {
         setShowSnackbar(true);
         setErrMsg(res.message);
       } else {
-        const { data } = await services.countCart();
+        const data = await services.countCart();
         dispatchUser({ type: SET_CART, payload: data });
       }
     },

@@ -20,7 +20,13 @@ const success = {
   cursor: 'default',
 };
 
-function CardMyTransaction({ myCart }) {
+const cancel = {
+  backgroundColor: '#ff857d',
+  color: '#e8291c',
+  cursor: 'default',
+};
+
+function CardMyTransaction({ myCart, handleCompleted }) {
   const classes = globalStyles();
   const localClasses = cardMyTransactionStyles();
 
@@ -77,25 +83,48 @@ function CardMyTransaction({ myCart }) {
               Total Price : Rp.{formatNumberToIDR(myCart.totalPrice)}
             </Box>
           </Typography>
-          {myCart.products.length > 1 && (
-            <Typography
-              variant="body2"
-              onClick={() => setshow(true)}
-              style={{ cursor: 'pointer' }}
-            >
-              <Box className={classes.identityColor} pl={2}>
-                +{myCart.products.length - 1} produk lainnya
-              </Box>
-            </Typography>
-          )}
+          <Typography
+            variant="body2"
+            onClick={() => setshow(true)}
+            style={{ cursor: 'pointer' }}
+          >
+            <Box className={classes.identityColor} pl={2}>
+              {myCart.products.length > 1 ? (
+                <>+{myCart.products.length - 1} produk lainnya</>
+              ) : (
+                <>
+                  <span style={{ textDecoration: 'underline' }}>
+                    Detail Transactions
+                  </span>
+                </>
+              )}
+            </Box>
+          </Typography>
         </Box>
       </Box>
       <Box textAlign="center" className={localClasses.root}>
         <img alt="waysbeans" src={BrandLogo} width={80} height={30} />
         <Box mt={1}>
-          <QRCode value="/cart" size={80} />
+          <QRCode value={`${myCart.name}`} size={80} />
         </Box>
         <Box mt={1}>
+          {myCart.status.toLowerCase() === 'on the way' && (
+            <ButtonReuse
+              variant="contained"
+              color="primary"
+              style={{
+                marginRight: 0,
+                borderRadius: '5px',
+                width: '130px',
+                height: '30px',
+                fontSize: '10px',
+              }}
+              onClick={() => handleCompleted({ order_id: myCart.id })}
+            >
+              completed
+            </ButtonReuse>
+          )}
+
           {myCart.status.toLowerCase() === 'waiting approve' && (
             <ButtonReuse
               variant="contained"
@@ -110,21 +139,6 @@ function CardMyTransaction({ myCart }) {
               }}
             >
               {myCart.status}
-            </ButtonReuse>
-          )}
-          {myCart.status.toLowerCase() === 'on the way' && (
-            <ButtonReuse
-              variant="contained"
-              color="primary"
-              style={{
-                marginRight: 0,
-                borderRadius: '5px',
-                width: '130px',
-                height: '30px',
-                fontSize: '10px',
-              }}
-            >
-              completed
             </ButtonReuse>
           )}
           {myCart.status.toLowerCase() === 'success' && (
@@ -143,15 +157,31 @@ function CardMyTransaction({ myCart }) {
               {myCart.status}
             </ButtonReuse>
           )}
+          {myCart.status.toLowerCase() === 'cancel' && (
+            <ButtonReuse
+              variant="contained"
+              color="primary"
+              style={{
+                marginRight: 0,
+                borderRadius: '5px',
+                width: '130px',
+                height: '30px',
+                fontSize: '10px',
+                ...cancel,
+              }}
+            >
+              {myCart.status}
+            </ButtonReuse>
+          )}
         </Box>
       </Box>
-      {/* {show && (
+      {show && (
         <PopUpDetailTransaction
           show={show}
           handleClose={() => setshow(false)}
-          cart_id
+          order_id={myCart.id}
         />
-      )} */}
+      )}
     </Box>
   );
 }

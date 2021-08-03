@@ -52,7 +52,7 @@ function Cart() {
         setShowSnackbar(true);
         setErrMsg(res.message);
       } else {
-        const { data } = await services.countCart();
+        const data = await services.countCart();
         dispatchUser({ type: SET_CART, payload: data });
         refetch();
       }
@@ -66,7 +66,7 @@ function Cart() {
 
   const minCartMutation = useMutation(services.minCart, {
     onSuccess: async (res) => {
-      const { data } = await services.countCart();
+      const data = await services.countCart();
       dispatchUser({ type: SET_CART, payload: data });
 
       refetch();
@@ -78,7 +78,7 @@ function Cart() {
 
   const deletCartMutation = useMutation(services.deleteCart, {
     onSuccess: async (res) => {
-      const { data } = await services.countCart();
+      const data = await services.countCart();
       dispatchUser({ type: SET_CART, payload: data });
       refetch();
     },
