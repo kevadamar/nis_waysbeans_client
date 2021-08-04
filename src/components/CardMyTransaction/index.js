@@ -12,18 +12,21 @@ const waiting = {
   backgroundColor: '#ffe2c0',
   color: '#FF9900',
   cursor: 'default',
+  border: 'none',
 };
 
 const success = {
   backgroundColor: '#c4f2c9',
   color: '#209a12',
   cursor: 'default',
+  border: 'none',
 };
 
 const cancel = {
   backgroundColor: '#ff857d',
   color: '#e8291c',
   cursor: 'default',
+  border: 'none',
 };
 
 function CardMyTransaction({ myCart, handleCompleted }) {
@@ -127,6 +130,7 @@ function CardMyTransaction({ myCart, handleCompleted }) {
 
           {myCart.status.toLowerCase() === 'waiting approve' && (
             <ButtonReuse
+              localClasses={localClasses.borderBtn}
               variant="contained"
               color="primary"
               style={{
@@ -143,6 +147,7 @@ function CardMyTransaction({ myCart, handleCompleted }) {
           )}
           {myCart.status.toLowerCase() === 'success' && (
             <ButtonReuse
+              localClasses={localClasses.borderBtn}
               variant="contained"
               color="primary"
               style={{
@@ -159,6 +164,7 @@ function CardMyTransaction({ myCart, handleCompleted }) {
           )}
           {myCart.status.toLowerCase() === 'cancel' && (
             <ButtonReuse
+              localClasses={localClasses.borderBtn}
               variant="contained"
               color="primary"
               style={{

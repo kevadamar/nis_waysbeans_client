@@ -42,21 +42,21 @@ const AddProduct = () => {
     },
   });
 
-  const onSubmited = (data) => {
-    console.log(data);
-  };
-
   const onSubmit = (data) => {
-    const formData = new FormData();
-    // data body
-    formData.append('name', data.name);
-    formData.append('stock', data.stock);
-    formData.append('price', data.price);
-    formData.append('description', data.description);
-    // images
-    formData.append('imageFile', file.file, file.file.name);
+    if (!file.file) {
+      setErrFile(true);
+    } else {
+      const formData = new FormData();
+      // data body
+      formData.append('name', data.name);
+      formData.append('stock', data.stock);
+      formData.append('price', data.price);
+      formData.append('description', data.description);
+      // images
+      formData.append('imageFile', file.file, file.file.name);
 
-    mutation.mutate({ payload: formData });
+      mutation.mutate({ payload: formData });
+    }
   };
 
   const {
@@ -76,7 +76,7 @@ const AddProduct = () => {
         onClose={handleClose}
         aria-labelledby="form-dialog-title"
         onClick={handleClose}
-        maxWidth='lg'
+        maxWidth="lg"
       >
         <DialogContent style={{ width: '40vw', paddingBottom: '40px' }}>
           <Typography component="span" variant="h6">
@@ -101,7 +101,7 @@ const AddProduct = () => {
                 </Box>
               </Typography>
               <Box mt={2}>
-                <form onSubmit={handleSubmit(onSubmit)}>
+                <form onSubmit={(e) => e.preventDefault()}>
                   <Controller
                     name="name"
                     control={control}
@@ -220,14 +220,14 @@ const AddProduct = () => {
                       setErrFile(false);
                     }}
                   />
-                  {errFile && <ErrMsg msg="Attachment is required" />}
+                  {errFile && <ErrMsg msg="Photo Product is required" />}
                   <br />
                   <br />
 
                   <ButtonReuse
                     variant="contained"
                     color="primary"
-                    type="submit"
+                    onClick={() => handleSubmit(onSubmit)()}
                   >
                     Add Product
                   </ButtonReuse>

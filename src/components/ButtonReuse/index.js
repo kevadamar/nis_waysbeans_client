@@ -16,7 +16,6 @@ const customButtonStyle = makeStyles((theme) => ({
   defaultBtn: {
     fontWeight: 'bold',
     marginRight: theme.spacing(2),
-    borderColor: 'transparent !important',
   },
 }));
 
@@ -29,7 +28,7 @@ const inlineStyle = {
 
 const ButtonReuse = (props) => {
   const classes = customButtonStyle();
-  const { children, style, ...others } = props;
+  const { children, style,localClasses, ...others } = props;
   return (
     <ThemeProvider theme={theme}>
       <Button

@@ -3,6 +3,7 @@ import {
   CircularProgress,
   Container,
   Grid,
+  IconButton,
   Snackbar,
   Typography,
 } from '@material-ui/core';
@@ -18,6 +19,8 @@ import ButtonReuse from '../../components/ButtonReuse';
 import { Alert } from '@material-ui/lab';
 import { UserContext } from '../../contexts/UserContext';
 import { UPDATE_PHOTO } from '../../contexts/UserContext/action';
+import { AddShoppingCart } from '@material-ui/icons';
+import { useHistory } from 'react-router-dom';
 
 const inlineCss = {
   overflow: 'auto',
@@ -28,6 +31,8 @@ function Profile() {
   const classes = globalStyles();
 
   const localClasses = profileStyles();
+
+  const router = useHistory();
 
   const [showEdit, setShowEdit] = useState(false);
   const [showSnackbar, setShowSnackbar] = useState(false);
@@ -186,6 +191,26 @@ function Profile() {
                     />
                   </Box>
                 ))}
+              {isSuccessTransaction &&
+                dataTransaction?.data?.transactions?.length === 0 && (
+                  <Box textAlign="center">
+                    <Typography variant="h5">
+                      <Box
+                        className={classes.identityColor}
+                        mb={1}
+                        fontWeight="bold"
+                      >
+                        Wah, kamu belum mempunyai transaksi.
+                      </Box>
+                    </Typography>
+                    <IconButton
+                      className={classes.identityColor}
+                      onClick={() => router.push('/')}
+                    >
+                      <AddShoppingCart />
+                    </IconButton>
+                  </Box>
+                )}
             </Box>
           </Box>
         </Grid>
