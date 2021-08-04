@@ -41,6 +41,8 @@ function Cart() {
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [errMsg, setErrMsg] = useState('');
 
+  const [disabledBtn, setDisabledBtn] = useState(false);
+
   const { isLoading, isError, refetch, data, isSuccess } = useQuery(
     ['carts'],
     () => services.getDetailCart(),
@@ -128,13 +130,26 @@ function Cart() {
                         width={80}
                         height={80}
                         style={{ cursor: 'pointer' }}
-                        onClick={() =>
-                          router.push(`/product/${myCart.product_id}`)
-                        }
+                        onClick={() => {
+                          if (myCart.stock === 0) {
+                            return null;
+                          } else {
+                            router.push(`/product/${myCart.product_id}`);
+                          }
+                        }}
                       />
                       <Box display="flex" flexDirection="column">
                         <Typography variant="h6">
-                          <Box pl={2}>{myCart.name}</Box>
+                          <Box pl={2}>
+                            <span
+                              style={{
+                                color: myCart.stock === 0 ? 'grey' : 'black',
+                                textDecoration: myCart.stock === 0 ? 'line-through' : 'none'
+                              }}
+                            >
+                              {myCart.name}
+                            </span>
+                          </Box>
                         </Typography>
                         <Typography variant="h6">
                           <PlusMinCart
@@ -146,6 +161,7 @@ function Cart() {
                             }
                             product_id={myCart.product_id}
                             qty={myCart.qty}
+                            stock={myCart.stock}
                           />
                         </Typography>
                       </Box>
@@ -161,11 +177,11 @@ function Cart() {
                       </Typography>
                       <IconButton
                         aria-label="delete cart"
-                        onClick={() =>
+                        onClick={() => {
                           deletCartMutation.mutate({
                             cart_id: myCart.id,
-                          })
-                        }
+                          });
+                        }}
                         className={classes.identityColor}
                       >
                         <Delete />
@@ -223,6 +239,7 @@ function Cart() {
                   color="primary"
                   variant="contained"
                   onClick={() => router.push('/cart/shipping')}
+                  disabled={data.listStocks.includes(0)}
                 >
                   Proceed To Checkout
                 </ButtonReuse>

@@ -15,7 +15,7 @@ import ModalSignin from '../../components/ModalSignin';
 import ModalSignup from '../../components/ModalSignup';
 import { formatNumberToIDR, saveToLocalStorage } from '../../Helpers';
 import { API } from '../../config';
-import { Box, Container, Grid, Snackbar, Typography } from '@material-ui/core';
+import { Box, CircularProgress, Container, Grid, Snackbar, Typography } from '@material-ui/core';
 import { globalStyles } from '../../styles/globalStyles';
 import ButtonReuse from '../../components/ButtonReuse';
 import { detailStyles } from './_detailProduct';
@@ -132,6 +132,11 @@ const DetailProduct = () => {
 
   return (
     <Container maxWidth="md" mt={4}>
+      {isLoading && (
+        <Box textAlign="center">
+          <CircularProgress />
+        </Box>
+      )}
       {isSuccess && (
         <>
           <Grid container spacing={5}>
