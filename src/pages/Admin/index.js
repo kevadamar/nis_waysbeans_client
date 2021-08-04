@@ -13,6 +13,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import { Cancel, CheckCircle } from '@material-ui/icons';
+import { useState } from 'react';
 
 import { useMutation, useQuery } from 'react-query';
 import ButtonReuse from '../../components/ButtonReuse';
@@ -59,9 +60,11 @@ const Admin = () => {
   const classes = globalStyles();
   const localClasses = adminStyles();
 
+  const [page, setPage] = useState(0);
+
   const { isLoading, data, isError, refetch, isSuccess } = useQuery(
-    ['transactions'],
-    services.getTransactions,
+    ['transactions', page],
+    () => services.getTransactions({ page: page }),
     // { staleTime: 30000 },
   );
 
@@ -91,17 +94,22 @@ const Admin = () => {
     cancelMutation.mutate({ order_id, payload: { status: 'Cancel' } });
   };
 
+  const handleChangePage = (event, newPage) => {
+    console.log(event, newPage);
+    setPage(newPage);
+  };
+
   return (
-    <Container maxWidth="lg" style={{ height: '87vh' }}>
-      <Box pt={1} pb={4}>
+    <Container maxWidth="lg" style={{ height: '75vh' }}>
+      <Box pt={1}>
         <Typography variant="h4">
           <Box fontWeight="bold" className={classes.identityColor} mb={4}>
             Incoming Transaction
           </Box>
         </Typography>
-        {isSuccess && data?.length > 0 && (
+        {isSuccess && data?.data?.length > 0 && (
           <Paper className={localClasses.paper}>
-            <TableContainer style={{ height: '56vh' }}>
+            <TableContainer>
               <Table
                 className={localClasses.table}
                 aria-labelledby="tableTitle"
@@ -134,7 +142,7 @@ const Admin = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {data?.map((row, index) => {
+                  {data?.data?.map((row, index) => {
                     return (
                       <TableRow hover tabIndex={-1} key={index}>
                         <TableCell align="left">{index + 1}</TableCell>
@@ -211,15 +219,15 @@ const Admin = () => {
                 </TableBody>
               </Table>
             </TableContainer>
-            {/* <TablePagination
-              rowsPerPageOptions={[5, 10, 25]}
+            <TablePagination
+              rowsPerPageOptions={[5]}
               component="div"
-              count={rows.length}
-              rowsPerPage={rowsPerPage}
+              count={data?.countData}
+              rowsPerPage={5}
               page={page}
               onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-            /> */}
+              // onRowsPerPageChange={handleChangeRowsPerPage}
+            />
           </Paper>
         )}
       </Box>

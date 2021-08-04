@@ -50,7 +50,7 @@ export const updateUser = async ({ payload }) => {
       throw response.data.status;
     }
 
-    return response.data.message;
+    return response.data.photo;
   } catch (error) {
     throw error.response.data.message;
   }

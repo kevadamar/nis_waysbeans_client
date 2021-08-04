@@ -20,13 +20,10 @@ const initialState = {
   countCart: 0,
   user: {
     fullname: '',
-    username: '',
     email: '',
-    password: '',
+    photo: '',
     role: '',
-    phoneNumber: '',
-    address: '',
-    gender: '',
+    password: '',
   },
   tempUser: [],
 };
@@ -73,9 +70,8 @@ const userReducer = (state, action) => {
         ...state,
         user: {
           fullname: '',
-          name: '',
           email: '',
-          password: '',
+          photo: '',
           role: '',
         },
         isLogin: false,
@@ -102,11 +98,11 @@ const userReducer = (state, action) => {
       const userLocal = getDataLocalStorage({ key: 'user' });
       saveToLocalStorage({
         key: 'user',
-        payload: { ...userLocal, image_profile: payload },
+        payload: { ...userLocal, photo: payload },
       });
       return {
         ...state,
-        user: { ...state.user, image_profile: payload },
+        user: { ...state.user, photo: payload },
       };
     case SET_CART:
       return {

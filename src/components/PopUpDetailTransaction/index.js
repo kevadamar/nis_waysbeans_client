@@ -57,7 +57,7 @@ function PopUpDetailTransaction({ show, handleClose, order_id }) {
       open={show}
       onClose={handleClose}
       aria-labelledby="form-dialog-title"
-      maxWidth="md"
+      maxWidth="lg"
     >
       <DialogTitle id="form-dialog-title">
         <Typography variant="h5" component="span">

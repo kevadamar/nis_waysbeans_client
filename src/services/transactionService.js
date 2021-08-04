@@ -1,14 +1,14 @@
 import { API, configJson } from '../config';
 
-export const getTransactions = async () => {
+export const getTransactions = async ({ page }) => {
   try {
-    const response = await API.get('transactions', configJson);
+    const response = await API.get(`transactions?page=${page}`, configJson);
 
     if (response.status !== 200) {
       throw response.data.message;
     }
 
-    return response.data.data;
+    return response.data;
   } catch (error) {
     throw error.response.data.message;
   }

@@ -82,6 +82,7 @@ function Shipping() {
         onClose={handleClose}
         aria-labelledby="form-dialog-title"
         onClick={handleClose}
+        maxWidth='lg'
       >
         <DialogContent style={{ width: '40vw', paddingBottom: '40px' }}>
           <Typography component="span" variant="h6">

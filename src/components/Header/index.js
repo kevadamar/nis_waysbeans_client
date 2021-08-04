@@ -127,6 +127,7 @@ const Header = () => {
   // render
   useEffect(() => {
     const auth = getDataLocalStorage({ key: 'user' });
+
     if (auth) {
       dispatchUser({ type: LOGIN, payload: auth });
     } else {

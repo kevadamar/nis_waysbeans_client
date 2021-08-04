@@ -21,12 +21,11 @@ function FormProfile({ cbForm, data }) {
   const [showPassword, setShowPassword] = useState(false);
 
   const onSubmited = (payload) => {
-    console.log(payload);
-    // if (!file.file) {
-    //   cbForm({email:payload.email,fullname:payload.fullname})
-    // } else {
-    //   cbForm({ ...payload, file: file.file });
-    // }
+    if (!file.file) {
+      cbForm({ fullname: payload.fullname, password: payload.password });
+    } else {
+      cbForm({ ...payload, file: file.file });
+    }
   };
 
   const ErrMsg = ({ msg }) => {
@@ -90,7 +89,7 @@ function FormProfile({ cbForm, data }) {
             </Container>
           </>
         )}
-        <br/>
+        <br />
         <Controller
           name="email"
           control={control}
@@ -102,6 +101,7 @@ function FormProfile({ cbForm, data }) {
           }}
           render={({ field }) => (
             <InputReuse
+              disabled={true}
               margin="dense"
               id="name"
               label="Email Address"

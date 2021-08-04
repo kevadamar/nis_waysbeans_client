@@ -3,9 +3,10 @@ import {
   CircularProgress,
   Container,
   Grid,
+  Snackbar,
   Typography,
 } from '@material-ui/core';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useMutation, useQueries, useQuery } from 'react-query';
 import { services } from '../../services';
 import { globalStyles } from '../../styles/globalStyles';
@@ -14,6 +15,9 @@ import CardMyTransaction from '../../components/CardMyTransaction';
 import { profileStyles } from './_ProfileStyles';
 import FormProfile from '../../components/FormProfile';
 import ButtonReuse from '../../components/ButtonReuse';
+import { Alert } from '@material-ui/lab';
+import { UserContext } from '../../contexts/UserContext';
+import { UPDATE_PHOTO } from '../../contexts/UserContext/action';
 
 const inlineCss = {
   overflow: 'auto',
@@ -26,6 +30,9 @@ function Profile() {
   const localClasses = profileStyles();
 
   const [showEdit, setShowEdit] = useState(false);
+  const [showSnackbar, setShowSnackbar] = useState(false);
+
+  const { dispatch: dispatchUser } = useContext(UserContext);
 
   const result = useQueries([
     {
@@ -43,6 +50,7 @@ function Profile() {
     isSuccess: isSuccessUser,
     isError: isErrorUser,
     isLoading: isLoadingUser,
+    refetch: refetchUser,
   } = result[0];
   const {
     data: dataTransaction,
@@ -53,7 +61,7 @@ function Profile() {
     refetch: refetchTransaction,
   } = result[1];
 
-  const mutation = useMutation(services.updateStatusTransaction, {
+  const updateStatusMutation = useMutation(services.updateStatusTransaction, {
     onSuccess: () => {
       refetchTransaction();
     },
@@ -61,24 +69,36 @@ function Profile() {
       console.log('error');
     },
   });
+  const updateProfileMutation = useMutation(services.updateUser, {
+    onSuccess: (photo) => {
+      if (photo) {
+        dispatchUser({ type: UPDATE_PHOTO, payload: photo });
+      }
+      refetchUser();
+      setShowEdit(false);
+      setShowSnackbar(true);
+    },
+    onError: async () => {
+      console.log('error');
+    },
+  });
 
   const handleCompleted = ({ order_id }) => {
-    mutation.mutate({ order_id, payload: { status: 'Success' } });
+    updateStatusMutation.mutate({ order_id, payload: { status: 'Success' } });
   };
 
   const handleCbForm = (payload) => {
     const formData = new FormData();
     formData.append('fullname', payload.fullname);
-    formData.append('email', payload.email);
+    // formData.append('email', payload.email);
     if (payload.password) {
       formData.append('password', payload.password);
     }
     if (payload.file) {
-      
       formData.append('imageFile', payload.file, payload.file.name);
     }
 
-    // mutation.mutate({ payload: formData });
+    updateProfileMutation.mutate({ payload: formData });
   };
 
   return (
@@ -132,13 +152,13 @@ function Profile() {
                       </Typography>
                     </Box>
                   </Box>
-                  {/* <ButtonReuse
+                  <ButtonReuse
                     variant="contained"
                     color="primary"
                     onClick={() => setShowEdit(true)}
                   >
-                    update profile
-                  </ButtonReuse> */}
+                    change profile
+                  </ButtonReuse>
                 </Box>
               ) : (
                 <FormProfile cbForm={handleCbForm} data={dataUser} />
@@ -158,7 +178,7 @@ function Profile() {
           <Box className={classes.secondaryBackgroundColor} mt={3}>
             <Box style={{ ...inlineCss }}>
               {isSuccessTransaction &&
-                dataTransaction?.transactions?.map((cart, idx) => (
+                dataTransaction?.data?.transactions?.map((cart, idx) => (
                   <Box key={idx}>
                     <CardMyTransaction
                       myCart={cart}
@@ -170,6 +190,13 @@ function Profile() {
           </Box>
         </Grid>
       </Grid>
+      <Snackbar
+        open={showSnackbar}
+        autoHideDuration={2000}
+        onClose={() => setShowSnackbar(false)}
+      >
+        <Alert severity="success">Successfuly Updated Profile.</Alert>
+      </Snackbar>
     </Container>
   );
 }

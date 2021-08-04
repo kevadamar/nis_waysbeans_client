@@ -40,27 +40,30 @@ function App() {
             <Route exact path="/product/:id" component={DetailProduct} />
 
             {/* user route after login */}
-            {stateUser.user?.role === 'user' && (
-              <>
-                <PrivateRoute exact path="/profile" component={Profile} />
-                <PrivateRoute exact path="/cart" component={Cart} />
-                <PrivateRoute
-                  exact
-                  path="/cart/shipping"
-                  component={Shipping}
-                />
-              </>
-            )}
+
+            <PrivateRoute
+              name="user"
+              exact
+              path="/profile"
+              component={Profile}
+            />
+            <PrivateRoute name="user" exact path="/cart" component={Cart} />
+            <PrivateRoute
+              name="user"
+              exact
+              path="/cart/shipping"
+              component={Shipping}
+            />
 
             {/* admin route */}
-            {stateUser.user?.role === 'admin' ? (
-              <>
-                <PrivateRoute exact path="/admin" component={Admin} />
-                <PrivateRoute exact path="/admin/add" component={AddProduct} />
-              </>
-            ) : (
-              <Redirect to="/" />
-            )}
+
+            <PrivateRoute name="admin" exact path="/admin" component={Admin} />
+            <PrivateRoute
+              name="admin"
+              exact
+              path="/admin/add"
+              component={AddProduct}
+            />
           </Switch>
         </Box>
       </Box>
