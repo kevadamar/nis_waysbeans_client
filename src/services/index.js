@@ -12,7 +12,13 @@ import {
   getDetailTransaction,
   updateStatusTransaction,
 } from './transactionService';
-import { addProduct } from './productService';
+import {
+  addProduct,
+  getMyProducts,
+  deleteProduct,
+  updateProduct,
+  getProduct,
+} from './productService';
 
 export const services = {
   signIn,
@@ -29,4 +35,8 @@ export const services = {
   getDetailTransaction,
   updateStatusTransaction,
   addProduct,
+  getMyProducts,
+  deleteProduct,
+  updateProduct,
+  getProduct,
 };

@@ -15,7 +15,14 @@ import ModalSignin from '../../components/ModalSignin';
 import ModalSignup from '../../components/ModalSignup';
 import { formatNumberToIDR, saveToLocalStorage } from '../../Helpers';
 import { API } from '../../config';
-import { Box, CircularProgress, Container, Grid, Snackbar, Typography } from '@material-ui/core';
+import {
+  Box,
+  CircularProgress,
+  Container,
+  Grid,
+  Snackbar,
+  Typography,
+} from '@material-ui/core';
 import { globalStyles } from '../../styles/globalStyles';
 import ButtonReuse from '../../components/ButtonReuse';
 import { detailStyles } from './_detailProduct';
@@ -40,24 +47,9 @@ const DetailProduct = () => {
 
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [errMsg, setErrMsg] = useState('');
-
-  const loadDataById = async (id) => {
-    try {
-      const newid = parseInt(id);
-      const response = await API.get(`product/${newid}`);
-
-      if (response.status !== 200) {
-        throw new Error('An error has occured');
-      }
-      return response.data.data;
-    } catch (error) {
-      throw error.response.data.message;
-    }
-  };
-
   const { isLoading, data, isError, isSuccess } = useQuery(
     `detail-product-${id}`,
-    async () => await loadDataById(id),
+    async () => await services.getProduct({ id }),
   );
 
   const mutation = useMutation(services.addCart, {

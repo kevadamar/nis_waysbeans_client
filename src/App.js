@@ -1,10 +1,6 @@
 import './App.css';
-import {
-  BrowserRouter as Router,
-  Redirect,
-  Route,
-  Switch,
-} from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+
 import { Box } from '@material-ui/core';
 import { getDataLocalStorage } from './Helpers';
 import { setAuthToken } from './config';
@@ -12,14 +8,15 @@ import Home from './pages/Home';
 import PrivateRoute from './Helpers/PrivateRoute';
 import Admin from './pages/Admin';
 import DetailProduct from './pages/DetailProduct';
-import AddProduct from './pages/AddProduct';
+import Product from './pages/Product';
 import Header from './components/Header';
 import Profile from './pages/Profile';
 import Cart from './pages/Cart';
 import Shipping from './pages/Shipping';
 import './App.css';
-import { UserContext } from './contexts/UserContext';
-import { useContext } from 'react';
+
+import MyProducts from './pages/MyProducts';
+import AddProduct from './pages/AddProduct';
 
 const token = getDataLocalStorage({ key: 'token' });
 if (token) {
@@ -27,8 +24,6 @@ if (token) {
 }
 
 function App() {
-  const { state: stateUser } = useContext(UserContext);
-
   return (
     <Router>
       <Header />
@@ -61,8 +56,20 @@ function App() {
             <PrivateRoute
               name="admin"
               exact
-              path="/admin/add"
+              path="/admin/my-products"
+              component={MyProducts}
+            />
+            <PrivateRoute
+              name="admin"
+              exact
+              path="/admin/my-products/add"
               component={AddProduct}
+            />
+            <PrivateRoute
+              name="admin"
+              exact
+              path="/admin/my-products/:action/:id"
+              component={Product}
             />
           </Switch>
         </Box>

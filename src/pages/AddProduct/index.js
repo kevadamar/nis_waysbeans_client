@@ -241,7 +241,7 @@ const AddProduct = () => {
                   show={show}
                   handleClose={() => {
                     setshow(false);
-                    router.push('/admin');
+                    router.push('/admin/my-products');
                   }}
                 />
               )}

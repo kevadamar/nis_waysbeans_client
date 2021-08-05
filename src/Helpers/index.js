@@ -82,6 +82,13 @@ const countDiffrenceDays = (date1, date2) => {
   return Difference_In_Time / (1000 * 3600 * 24);
 };
 
+const autoCapitalize = (str) => {
+  return str
+    .split(/\s+/)
+    .map((s) => s.charAt(0).toUpperCase() + s.substring(1).toLowerCase())
+    .join(' ');
+};
+
 export {
   formatPriceStringToInt,
   formatNumberToIDR,
@@ -90,4 +97,5 @@ export {
   removeDataLocalStorage,
   changeFormatDate,
   countDiffrenceDays,
+  autoCapitalize,
 };
