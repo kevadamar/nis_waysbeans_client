@@ -14,6 +14,7 @@ import {
 
 import InputReuse from '../InputReuse';
 import { services } from '../../services';
+import { Alert } from '@material-ui/lab';
 
 const useStyle = makeStyles((theme) => ({
   btnLink: {
@@ -48,7 +49,7 @@ const ModalSignin = ({ show, handleClose, handleTo, handleSubmitLogin }) => {
     },
     onError: async () => {
       console.log('error');
-      setError(!error);
+      setError(true);
     },
   });
 
@@ -150,6 +151,13 @@ const ModalSignin = ({ show, handleClose, handleTo, handleSubmitLogin }) => {
           </ButtonReuse>
         </form>
         <Box style={{ textAlign: 'center', marginTop: '25px' }}>
+          {error && (
+            <Box mb={1}>
+              <Alert severity="error" onClose={() => setError(false)}>
+                Username Or Password not valid.
+              </Alert>
+            </Box>
+          )}
           <Typography variant="p">
             Don't have an account? Klik
             <Typography

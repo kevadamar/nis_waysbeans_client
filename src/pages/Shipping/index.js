@@ -15,6 +15,7 @@ import ButtonReuse from '../../components/ButtonReuse';
 import CardShipping from '../../components/CardShipping';
 import FormShipping from '../../components/FormShipping';
 import { UserContext } from '../../contexts/UserContext';
+import { SET_CART } from '../../contexts/UserContext/action';
 import { formatNumberToIDR } from '../../Helpers';
 import { services } from '../../services';
 import { globalStyles } from '../../styles/globalStyles';
@@ -30,7 +31,7 @@ function Shipping() {
   const router = useHistory();
   const { location } = router;
 
-  const { state: stateUser } = useContext(UserContext);
+  const { state: stateUser, dispatch: dispatchUser } = useContext(UserContext);
   const [buttonIsClicked, setButtonIsClicked] = useState(false);
   const [show, setshow] = useState(false);
 
@@ -39,10 +40,12 @@ function Shipping() {
   );
 
   const checkoutMutation = useMutation(services.checkoutProcess, {
-    onSuccess: async (data) => {
-      console.log(`data pay`, data);
+    onSuccess: async (res) => {
+      console.log(`res pay`, res);
 
       setshow(true);
+      const data = await services.countCart();
+      dispatchUser({ type: SET_CART, payload: data });
     },
     onError: async (error) => {
       console.log('error', error);
@@ -79,9 +82,10 @@ function Shipping() {
         onClose={handleClose}
         aria-labelledby="form-dialog-title"
         onClick={handleClose}
+        maxWidth='lg'
       >
         <DialogContent style={{ width: '40vw', paddingBottom: '40px' }}>
-          <Typography>
+          <Typography component="span" variant="h6">
             <Box color="green" textAlign="center">
               Thank you for ordering in us, please wait 1 x 24 hours to verify
               you order
@@ -101,7 +105,7 @@ function Shipping() {
       )}
       <Grid container spacing={3}>
         <Grid item sm={12} md={6}>
-          <Typography variant="h4">
+          <Typography variant="h4" component="span">
             <Box fontWeight="bold" className={classes.identityColor} mb={3}>
               Shipping
             </Box>
@@ -134,7 +138,7 @@ function Shipping() {
                   className={classes.identityBackgroundColor}
                   color="#613D2B"
                 />
-                <Typography variant="body1">
+                <Typography variant="body1" component="span">
                   <Box
                     pt={2}
                     pb={2}
@@ -143,12 +147,12 @@ function Shipping() {
                     display="flex"
                     justifyContent="space-between"
                   >
-                    <Typography>
+                    <Typography component="span" variant="body1">
                       <Box fontWeight="bold" className={classes.identityColor}>
                         Total Price :
                       </Box>
                     </Typography>
-                    <Typography>
+                    <Typography component="span" variant="body1">
                       <Box fontWeight="bold" className={classes.identityColor}>
                         Rp.
                         {formatNumberToIDR(data?.totalPrice)}

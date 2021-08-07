@@ -74,7 +74,7 @@ function FormShipping({ buttonIsClicked, cbForm }) {
             <InputReuse
               margin="dense"
               id="name"
-              label="name"
+              label="Name"
               type="text"
               variant="outlined"
               fullWidth
@@ -99,7 +99,7 @@ function FormShipping({ buttonIsClicked, cbForm }) {
             <InputReuse
               margin="dense"
               id="phone"
-              label="phone"
+              label="Phone"
               type="number"
               variant="outlined"
               fullWidth
@@ -127,7 +127,7 @@ function FormShipping({ buttonIsClicked, cbForm }) {
             <InputReuse
               margin="dense"
               id="possCode"
-              label="possCode"
+              label="Poss Code"
               type="number"
               variant="outlined"
               fullWidth
@@ -152,7 +152,7 @@ function FormShipping({ buttonIsClicked, cbForm }) {
             <InputReuse
               margin="dense"
               id="address"
-              label="address"
+              label="Address"
               type="text"
               variant="outlined"
               fullWidth

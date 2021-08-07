@@ -52,7 +52,7 @@ const CustomDropdown = ({ handleLogout, hideDropdown }) => {
           className={Styles.dropdownMenu}
           onClick={() => {
             hideDropdown();
-            router.push('/admin/add');
+            router.push('/admin/my-products');
           }}
         >
           <img
@@ -61,7 +61,7 @@ const CustomDropdown = ({ handleLogout, hideDropdown }) => {
             alt="user icon"
             width="30px"
           />
-          <p className={Styles.textMenu}>Add Product</p>
+          <p className={Styles.textMenu}>My Products</p>
         </div>
       </>
     );

@@ -127,13 +127,13 @@ const ModalSignup = ({ show, handleClose, handleTo, handleSubmitSignup }) => {
           <Controller
             name="fullname"
             control={control}
-            rules={{ required: 'Fullname is required' }}
+            rules={{ required: 'Full Name is required' }}
             render={({ field }) => (
               <InputReuse
                 required
                 margin="dense"
                 id="fullname"
-                label="fullname"
+                label="Full Name"
                 type="text"
                 variant="outlined"
                 fullWidth

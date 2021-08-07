@@ -1,4 +1,4 @@
-import { Box, Container } from '@material-ui/core';
+import { Box, CircularProgress, Container } from '@material-ui/core';
 import { useQuery } from 'react-query';
 import CardList from '../../components/CardList';
 import Hero from '../../components/Hero';
@@ -39,7 +39,11 @@ const User = () => {
         </Box>
       </Box>
       <Box>
-        {isLoading && <h2>Loading . . . .</h2>}
+        {isLoading && (
+          <Box textAlign="center">
+            <CircularProgress />
+          </Box>
+        )}
         {isError && <h2>There was an error processing your request....</h2>}
         {isSuccess && <CardList data={data} />}
       </Box>

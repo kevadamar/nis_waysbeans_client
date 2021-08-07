@@ -6,7 +6,7 @@ const CardList = ({ data }) => {
     <Grid container spacing={3}>
       {data.length > 0 &&
         data.map((item, index) => (
-          <Grid item xl={3} sm={12} md={3} key={index}>
+          <Grid item xl={3} xs={6} sm={4} md={3} key={index}>
             <CardItem item={item} />
           </Grid>
         ))}
