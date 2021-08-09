@@ -68,7 +68,7 @@ function MyProducts() {
 
   return (
     <Container maxWidth="lg" style={{ height: '75vh' }}>
-      <Box pb={2}>
+      <Box pb={1}>
         <Box fontWeight="bold" className={classes.identityColor} mb={1}>
           <ButtonReuse
             variant="contained"

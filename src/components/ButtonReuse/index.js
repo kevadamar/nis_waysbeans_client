@@ -21,7 +21,6 @@ const customButtonStyle = makeStyles((theme) => ({
 
 const inlineStyle = {
   button: {
-    border: '2px solid',
     borderRadius: '10px',
   },
 };

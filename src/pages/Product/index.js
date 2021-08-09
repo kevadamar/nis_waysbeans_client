@@ -17,7 +17,6 @@ import { globalStyles } from '../../styles/globalStyles';
 import InputReuse from '../../components/InputReuse';
 import { services } from '../../services';
 import { addProductStyles } from './_AddProductStyles';
-import { API } from '../../config';
 import { autoCapitalize } from '../../Helpers';
 
 const Product = () => {
@@ -37,7 +36,7 @@ const Product = () => {
 
   const { isLoading, data, isError, isSuccess } = useQuery(
     `detail-product-${id}`,
-    async () => await services.getProduct({ id }),
+    () => services.getProductAdmin({ id }),
   );
 
   console.log(data);

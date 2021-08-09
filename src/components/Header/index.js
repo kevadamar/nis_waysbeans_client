@@ -156,6 +156,8 @@ const Header = () => {
         >
           <ButtonReuse
             color="primary"
+            variant="outlined"
+            style={{ border: '2px solid', paddingBottom: '3px' }}
             onClick={() => handleModalShow({ name: show.nameSignIn })}
           >
             Login

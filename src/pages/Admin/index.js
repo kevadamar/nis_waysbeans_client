@@ -11,6 +11,7 @@ import {
   TablePagination,
   TableRow,
   Typography,
+  CircularProgress
 } from '@material-ui/core';
 import { Cancel, CheckCircle } from '@material-ui/icons';
 import { useState } from 'react';
@@ -21,6 +22,10 @@ import { services } from '../../services';
 import { globalStyles } from '../../styles/globalStyles';
 
 const adminStyles = makeStyles((theme) => ({
+  root: {
+    borderTop: '0 !important',
+    border: '1px solid #828282!important',
+  },
   paper: {
     width: '100%',
     marginBottom: theme.spacing(2),
@@ -107,6 +112,11 @@ const Admin = () => {
             Incoming Transaction
           </Box>
         </Typography>
+        {isLoading && (
+          <Box textAlign="center">
+            <CircularProgress />
+          </Box>
+        )}
         {isSuccess && data?.data?.length > 0 && (
           <Paper className={localClasses.paper}>
             <TableContainer>
@@ -220,6 +230,7 @@ const Admin = () => {
               </Table>
             </TableContainer>
             <TablePagination
+              className={localClasses.root}
               rowsPerPageOptions={[5]}
               component="div"
               count={data?.countData}

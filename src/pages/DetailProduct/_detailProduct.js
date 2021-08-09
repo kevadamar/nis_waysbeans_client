@@ -9,4 +9,9 @@ export const detailStyles = makeStyles((theme) => ({
     textOverflow: 'ellipsis',
     marginBottom: '20px',
   },
+  iconSize: {
+    height: '3em',
+    width: '3em',
+    color: 'red'
+  },
 }));
