@@ -85,7 +85,7 @@ const DetailProduct = () => {
   // handle submit login
   const handleSubmitSignin = (payload) => {
     const { user, token } = payload;
-    dispatchUser({ type: LOGIN, payload: user });
+    dispatchUser({ type: LOGIN, payload: { user, token } });
     saveToLocalStorage({ key: 'user', payload: user });
     saveToLocalStorage({ key: 'token', payload: token });
     handleModalShow({ name: show.nameSignIn });
@@ -131,7 +131,7 @@ const DetailProduct = () => {
       )}
       {isError && (
         <>
-          <Box display="flex" alignItems="center" flexDirection='column'>
+          <Box display="flex" alignItems="center" flexDirection="column">
             <Error className={classesLocal.iconSize} />
             <Typography variant="h4" component="span">
               {error}

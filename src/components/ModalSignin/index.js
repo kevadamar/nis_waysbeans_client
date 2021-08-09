@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import ButtonReuse from '../ButtonReuse';
 import { useMutation } from 'react-query';
-import { API, setAuthToken } from '../../config';
+import { setAuthToken } from '../../config';
 import { Controller, useForm } from 'react-hook-form';
 import {
   Box,
@@ -62,7 +62,7 @@ const ModalSignin = ({ show, handleClose, handleTo, handleSubmitLogin }) => {
   };
 
   const {
-    formState: { errors, isSubmitting },
+    formState: { errors },
     handleSubmit,
     control,
   } = useForm();
