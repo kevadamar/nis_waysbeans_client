@@ -32,7 +32,20 @@ export const getProduct = async ({ id }) => {
   try {
     const newid = parseInt(id);
     const response = await API.get(`product/${newid}`, configJson);
-    console.log(response);
+
+    if (response.status !== 200) {
+      throw response.data.message;
+    }
+    return response.data.data;
+  } catch (error) {
+    throw error.response.data.message;
+  }
+};
+export const getProductAdmin = async ({ id }) => {
+  try {
+    const newid = parseInt(id);
+    const response = await API.get(`product/${newid}/detail`, configJson);
+
     if (response.status !== 200) {
       throw response.data.message;
     }

@@ -3,8 +3,6 @@ import { useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { useMutation, useQuery } from 'react-query';
 
-// import ButtonReuse from '../../components/utils/ButtonReuse';
-
 import { UserContext } from '../../contexts/UserContext';
 import {
   ADD_NEW_USER,
@@ -14,7 +12,6 @@ import {
 import ModalSignin from '../../components/ModalSignin';
 import ModalSignup from '../../components/ModalSignup';
 import { formatNumberToIDR, saveToLocalStorage } from '../../Helpers';
-import { API } from '../../config';
 import {
   Box,
   CircularProgress,
@@ -28,6 +25,7 @@ import ButtonReuse from '../../components/ButtonReuse';
 import { detailStyles } from './_detailProduct';
 import { services } from '../../services';
 import Alert from '@material-ui/lab/Alert';
+import { Error } from '@material-ui/icons';
 
 const DetailProduct = () => {
   const classes = globalStyles();
@@ -47,7 +45,7 @@ const DetailProduct = () => {
 
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [errMsg, setErrMsg] = useState('');
-  const { isLoading, data, isError, isSuccess } = useQuery(
+  const { isLoading, data, isSuccess, isError, error } = useQuery(
     `detail-product-${id}`,
     async () => await services.getProduct({ id }),
   );
@@ -87,7 +85,7 @@ const DetailProduct = () => {
   // handle submit login
   const handleSubmitSignin = (payload) => {
     const { user, token } = payload;
-    dispatchUser({ type: LOGIN, payload: user });
+    dispatchUser({ type: LOGIN, payload: { user, token } });
     saveToLocalStorage({ key: 'user', payload: user });
     saveToLocalStorage({ key: 'token', payload: token });
     handleModalShow({ name: show.nameSignIn });
@@ -122,12 +120,24 @@ const DetailProduct = () => {
     }
   };
 
+  console.log(error, isError);
+
   return (
     <Container maxWidth="md" mt={4}>
       {isLoading && (
         <Box textAlign="center">
           <CircularProgress />
         </Box>
+      )}
+      {isError && (
+        <>
+          <Box display="flex" alignItems="center" flexDirection="column">
+            <Error className={classesLocal.iconSize} />
+            <Typography variant="h4" component="span">
+              {error}
+            </Typography>
+          </Box>
+        </>
       )}
       {isSuccess && (
         <>

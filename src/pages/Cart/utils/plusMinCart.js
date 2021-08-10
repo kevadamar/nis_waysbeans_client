@@ -24,7 +24,7 @@ export default function PlusMinCart({
         aria-label="minus quantity"
         onClick={() => minHandle(product_id)}
         className={classes.identityColor}
-        disabled={stock === 0}
+        disabled={stock === 0 || qty < 2}
       >
         <Remove />
       </IconButton>

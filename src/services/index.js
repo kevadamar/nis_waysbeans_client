@@ -18,6 +18,7 @@ import {
   deleteProduct,
   updateProduct,
   getProduct,
+  getProductAdmin,
 } from './productService';
 
 export const services = {
@@ -39,4 +40,5 @@ export const services = {
   deleteProduct,
   updateProduct,
   getProduct,
+  getProductAdmin,
 };

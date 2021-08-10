@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import {
   Box,
   Container,
@@ -22,6 +22,8 @@ import { services } from '../../services';
 import ButtonReuse from '../../components/ButtonReuse';
 import { useHistory } from 'react-router-dom';
 import { Alert } from '@material-ui/lab';
+import { UserContext } from '../../contexts/UserContext';
+import { io } from 'socket.io-client';
 
 const myProductsStyles = makeStyles((theme) => ({
   paper: {
@@ -34,6 +36,7 @@ const myProductsStyles = makeStyles((theme) => ({
 }));
 
 function MyProducts() {
+  const socket = useRef();
   const classes = globalStyles();
   const localClasses = myProductsStyles();
 
@@ -41,6 +44,8 @@ function MyProducts() {
 
   const [page, setPage] = useState(0);
   const [show, setshow] = useState(false);
+
+  const { state: stateUser } = useContext(UserContext);
 
   const { isSuccess, isLoading, data, refetch } = useQuery(
     ['my-products', page],
@@ -66,9 +71,24 @@ function MyProducts() {
     mutation.mutate({ id });
   };
 
+  useEffect(() => {
+    socket.current = io.connect('http://localhost:5000', {
+      transports: ['websocket'],
+      query: {
+        token: stateUser.token,
+      },
+    });
+
+    socket.current.emit('load-notifications');
+
+    return () => {
+      socket.current.disconnect();
+    };
+  }, []);
+
   return (
     <Container maxWidth="lg" style={{ height: '75vh' }}>
-      <Box pb={2}>
+      <Box pb={1}>
         <Box fontWeight="bold" className={classes.identityColor} mb={1}>
           <ButtonReuse
             variant="contained"

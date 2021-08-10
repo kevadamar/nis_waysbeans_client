@@ -9,3 +9,11 @@ input::-webkit-inner-spin-button {
 input[type='number'] {
   -moz-appearance: textfield;
 }
+
+th,
+td {
+  border-top: 1px solid #828282;
+  border-bottom: 1px solid #828282 !important;
+  border-left: 1px solid #828282;
+  border-right: 1px solid #828282;
+}

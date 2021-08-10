@@ -18,6 +18,7 @@ const initialState = {
   isLogin: false,
   isSignUp: false,
   countCart: 0,
+  token: '',
   user: {
     fullname: '',
     email: '',
@@ -60,7 +61,8 @@ const userReducer = (state, action) => {
     case LOGIN:
       return {
         ...state,
-        user: payload,
+        user: payload.user,
+        token: payload.token,
         isLogin: true,
         isSignUp: false,
       };
@@ -74,6 +76,7 @@ const userReducer = (state, action) => {
           photo: '',
           role: '',
         },
+        token: '',
         isLogin: false,
         isSignUp: false,
       };

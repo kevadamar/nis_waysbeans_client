@@ -11,16 +11,23 @@ import {
   TablePagination,
   TableRow,
   Typography,
+  CircularProgress,
 } from '@material-ui/core';
 import { Cancel, CheckCircle } from '@material-ui/icons';
-import { useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 
 import { useMutation, useQuery } from 'react-query';
+import { io } from 'socket.io-client';
 import ButtonReuse from '../../components/ButtonReuse';
+import { UserContext } from '../../contexts/UserContext';
 import { services } from '../../services';
 import { globalStyles } from '../../styles/globalStyles';
 
 const adminStyles = makeStyles((theme) => ({
+  root: {
+    borderTop: '0 !important',
+    border: '1px solid #828282!important',
+  },
   paper: {
     width: '100%',
     marginBottom: theme.spacing(2),
@@ -57,12 +64,20 @@ const btnApprove = {
 };
 
 const Admin = () => {
+  const socket = useRef();
+
   const classes = globalStyles();
   const localClasses = adminStyles();
 
+  const { state: stateUser } = useContext(UserContext);
+
   const [page, setPage] = useState(0);
 
-  const { isLoading, data, isError, refetch, isSuccess } = useQuery(
+  const loadNotifications = () => {
+    socket.current.emit('load-notifications');
+  };
+
+  const { isLoading, data, refetch, isSuccess } = useQuery(
     ['transactions', page],
     () => services.getTransactions({ page: page }),
     // { staleTime: 30000 },
@@ -71,6 +86,7 @@ const Admin = () => {
   const approveMutation = useMutation(services.updateStatusTransaction, {
     onSuccess: () => {
       refetch();
+      loadNotifications();
     },
     onError: (error) => {
       console.log(error);
@@ -80,6 +96,7 @@ const Admin = () => {
   const cancelMutation = useMutation(services.updateStatusTransaction, {
     onSuccess: () => {
       refetch();
+      loadNotifications();
     },
     onError: (error) => {
       console.log(error);
@@ -95,9 +112,25 @@ const Admin = () => {
   };
 
   const handleChangePage = (event, newPage) => {
-    console.log(event, newPage);
+    // console.log(event, newPage);
     setPage(newPage);
   };
+
+  useEffect(() => {
+    socket.current = io.connect('http://localhost:5000', {
+      transports: ['websocket'],
+      query: {
+        token: stateUser.token,
+      },
+    });
+
+    // trigger/call event to server socket
+    loadNotifications();
+
+    return () => {
+      socket.current.disconnect();
+    };
+  }, []);
 
   return (
     <Container maxWidth="lg" style={{ height: '75vh' }}>
@@ -107,6 +140,11 @@ const Admin = () => {
             Incoming Transaction
           </Box>
         </Typography>
+        {isLoading && (
+          <Box textAlign="center">
+            <CircularProgress />
+          </Box>
+        )}
         {isSuccess && data?.data?.length > 0 && (
           <Paper className={localClasses.paper}>
             <TableContainer>
@@ -220,6 +258,7 @@ const Admin = () => {
               </Table>
             </TableContainer>
             <TablePagination
+              className={localClasses.root}
               rowsPerPageOptions={[5]}
               component="div"
               count={data?.countData}

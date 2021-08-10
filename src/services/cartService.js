@@ -15,7 +15,7 @@ export const checkoutProcess = async ({ payload }) => {
 
 export const countCart = async () => {
   try {
-    const response = await API.get('count-cart', configJson);
+    const response = await API.get('cart/count', configJson);
 
     if (response.status !== 200) {
       throw response.data.message;
@@ -29,7 +29,7 @@ export const countCart = async () => {
 
 export const addCart = async ({ product_id }) => {
   try {
-    const response = await API.post(`add-cart/${product_id}`, configJson);
+    const response = await API.post(`cart/${product_id}/add`, configJson);
 
     if (response.status !== 200) {
       throw response.data.message;
@@ -43,7 +43,7 @@ export const addCart = async ({ product_id }) => {
 
 export const minCart = async ({ product_id }) => {
   try {
-    const response = await API.post(`minus-cart/${product_id}`, configJson);
+    const response = await API.post(`cart/${product_id}/min`, configJson);
 
     if (response.status !== 200) {
       throw response.data.message;
@@ -57,7 +57,7 @@ export const minCart = async ({ product_id }) => {
 
 export const getDetailCart = async () => {
   try {
-    const response = await API.get('detail-cart', configJson);
+    const response = await API.get('cart/detail', configJson);
 
     if (response.status !== 200) {
       throw response.data.message;
