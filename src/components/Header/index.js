@@ -69,7 +69,7 @@ const Header = () => {
   // handle submit login
   const handleSubmitSignin = (payload) => {
     const { user, token } = payload;
-    dispatchUser({ type: LOGIN, payload: user });
+    dispatchUser({ type: LOGIN, payload: { user, token } });
     // console.log(payload);
     saveToLocalStorage({ key: 'user', payload: user });
     saveToLocalStorage({ key: 'token', payload: token });
@@ -126,10 +126,11 @@ const Header = () => {
 
   // render
   useEffect(() => {
-    const auth = getDataLocalStorage({ key: 'user' });
+    const user = getDataLocalStorage({ key: 'user' });
+    const token = getDataLocalStorage({ key: 'token' });
 
-    if (auth) {
-      dispatchUser({ type: LOGIN, payload: auth });
+    if (user && token) {
+      dispatchUser({ type: LOGIN, payload: { user, token } });
     } else {
       dispatchUser({ type: LOGOUT });
     }
