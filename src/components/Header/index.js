@@ -23,6 +23,7 @@ import IconUser from '../../assets/icon_user.png';
 import { Avatar, Box } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import CartIconButton from '../CartIconButton';
+import NotificationIconButton from '../NotificationIconButton';
 
 const useStyles = makeStyles((theme) => ({
   grow: {
@@ -199,6 +200,7 @@ const Header = () => {
             {stateUser.isLogin ? (
               <>
                 {stateUser.user.role === 'user' && <CartIconButton />}
+                {stateUser.user.role === 'admin' && <NotificationIconButton />}
                 <IconButton
                   edge="end"
                   aria-label="account of current user"

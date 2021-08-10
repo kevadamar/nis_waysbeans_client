@@ -8,9 +8,10 @@ import {
   Grid,
   Typography,
 } from '@material-ui/core';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useMutation, useQuery } from 'react-query';
 import { useHistory } from 'react-router-dom';
+import { io } from 'socket.io-client';
 import ButtonReuse from '../../components/ButtonReuse';
 import CardShipping from '../../components/CardShipping';
 import FormShipping from '../../components/FormShipping';
@@ -26,6 +27,8 @@ const inlineCss = {
 };
 
 function Shipping() {
+  const socket = useRef();
+
   const classes = globalStyles();
 
   const router = useHistory();
@@ -46,6 +49,8 @@ function Shipping() {
       setshow(true);
       const data = await services.countCart();
       dispatchUser({ type: SET_CART, payload: data });
+
+      socket.current.emit('send-notifications');
     },
     onError: async (error) => {
       console.log('error', error);
@@ -73,6 +78,13 @@ function Shipping() {
     if (location.state && stateUser.countCart === 0) {
       router.replace(location.state.pathname);
     }
+
+    socket.current = io.connect('http://localhost:5000', {
+      transports: ['websocket'],
+      query: {
+        token: stateUser.token,
+      },
+    });
   }, []);
 
   const DialogSucc = ({ show, handleClose }) => {
@@ -82,7 +94,7 @@ function Shipping() {
         onClose={handleClose}
         aria-labelledby="form-dialog-title"
         onClick={handleClose}
-        maxWidth='lg'
+        maxWidth="lg"
       >
         <DialogContent style={{ width: '40vw', paddingBottom: '40px' }}>
           <Typography component="span" variant="h6">

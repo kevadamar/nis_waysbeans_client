@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useMutation, useQuery } from 'react-query';
 import { useHistory, useParams } from 'react-router-dom';
@@ -18,8 +18,11 @@ import InputReuse from '../../components/InputReuse';
 import { services } from '../../services';
 import { addProductStyles } from './_AddProductStyles';
 import { autoCapitalize } from '../../Helpers';
+import { io } from 'socket.io-client';
+import { UserContext } from '../../contexts/UserContext';
 
 const Product = () => {
+  const socket = useRef();
   const router = useHistory();
 
   const { action, id } = useParams();
@@ -30,11 +33,13 @@ const Product = () => {
 
   const [show, setshow] = useState(false);
 
+  const { state: stateUser } = useContext(UserContext);
+
   const [file, setFile] = useState({ file: '', fileUrl: '' });
   const [errFile, setErrFile] = useState(false);
   const [errUpdate, setErrUpdate] = useState({ status: false, msg: '' });
 
-  const { isLoading, data, isError, isSuccess } = useQuery(
+  const { isLoading, data, isError, isSuccess, remove } = useQuery(
     `detail-product-${id}`,
     () => services.getProductAdmin({ id }),
   );
@@ -70,7 +75,24 @@ const Product = () => {
     formState: { errors },
     control,
     handleSubmit,
+    reset,
   } = useForm();
+
+  useEffect(() => {
+    socket.current = io.connect('http://localhost:5000', {
+      transports: ['websocket'],
+      query: {
+        token: stateUser.token,
+      },
+    });
+
+    socket.current.emit('load-notifications');
+    return () => {
+      socket.current.disconnect();
+      reset();
+      remove();
+    };
+  }, []);
 
   const ErrMsg = ({ msg }) => {
     return <span style={{ color: 'red' }}>{msg}</span>;
