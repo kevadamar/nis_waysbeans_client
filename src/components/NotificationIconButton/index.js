@@ -1,9 +1,14 @@
 import { Badge, IconButton, makeStyles } from '@material-ui/core';
 import { Notifications } from '@material-ui/icons';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useRef, useState, useEffect, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
-import { io } from 'socket.io-client';
+import {
+  connectSocketIO,
+  listenNotifications,
+  loadNotifications,
+} from '../../config';
 import { UserContext } from '../../contexts/UserContext';
+
 import { globalStyles } from '../../styles/globalStyles';
 import NotificationsDropdown from '../NotificationsDropdown';
 
@@ -18,35 +23,26 @@ const notificationStyles = makeStyles((theme) => ({
 
 function NotificationIconButton() {
   const socket = useRef();
+
   const classes = globalStyles();
   const localClasses = notificationStyles();
 
   const router = useHistory();
 
-  // contexts
   const { state: stateUser } = useContext(UserContext);
 
   const [showDropdown, setShowDropdown] = useState(false);
   const [notifications, setNotifications] = useState([]);
 
-  const listenNotifications = () => {
-    socket.current.on('new-notifications', (data) => {
-      console.log(data, 'data');
-      setNotifications(data);
-    });
-  };
-
   useEffect(() => {
-    socket.current = io.connect('http://localhost:5000', {
-      transports: ['websocket'],
-      query: {
-        token: stateUser.token,
-      },
-    });
+    socket.current = connectSocketIO({ token: stateUser.token });
 
-    listenNotifications();
+    listenNotifications({socket, cb: (data) => setNotifications(data)})
+
+    loadNotifications({socket});
+
     return () => {
-      socket.current.disconnect();
+      socket.current.disconnect()
     };
   }, []);
 

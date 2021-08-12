@@ -20,7 +20,7 @@ import AddProduct from './pages/AddProduct';
 
 const token = getDataLocalStorage({ key: 'token' });
 if (token) {
-  setAuthToken(token);
+  setAuthToken({token});
 }
 
 function App() {

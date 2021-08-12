@@ -11,10 +11,16 @@ import {
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useMutation, useQuery } from 'react-query';
 import { useHistory } from 'react-router-dom';
-import { io } from 'socket.io-client';
+
 import ButtonReuse from '../../components/ButtonReuse';
 import CardShipping from '../../components/CardShipping';
 import FormShipping from '../../components/FormShipping';
+import {
+  connectSocketIO,
+  loadNotifications,
+  sendNotifications,
+} from '../../config';
+
 import { UserContext } from '../../contexts/UserContext';
 import { SET_CART } from '../../contexts/UserContext/action';
 import { formatNumberToIDR } from '../../Helpers';
@@ -38,7 +44,7 @@ function Shipping() {
   const [buttonIsClicked, setButtonIsClicked] = useState(false);
   const [show, setshow] = useState(false);
 
-  const { isLoading, isError, data, isSuccess } = useQuery(['carts'], () =>
+  const { isLoading, data, isSuccess } = useQuery(['carts'], () =>
     services.getDetailCart(),
   );
 
@@ -49,8 +55,7 @@ function Shipping() {
       setshow(true);
       const data = await services.countCart();
       dispatchUser({ type: SET_CART, payload: data });
-
-      socket.current.emit('send-notifications');
+      sendNotifications({ socket });
     },
     onError: async (error) => {
       console.log('error', error);
@@ -79,12 +84,11 @@ function Shipping() {
       router.replace(location.state.pathname);
     }
 
-    socket.current = io.connect('http://localhost:5000', {
-      transports: ['websocket'],
-      query: {
-        token: stateUser.token,
-      },
-    });
+    socket.current = connectSocketIO({ token: stateUser.token });
+
+    return () => {
+      socket.current.disconnect();
+    };
   }, []);
 
   const DialogSucc = ({ show, handleClose }) => {
