@@ -43,7 +43,7 @@ const ModalSignin = ({ show, handleClose, handleTo, handleSubmitLogin }) => {
 
   const mutation = useMutation(handleLogin, {
     onSuccess: async ({ data }) => {
-      setAuthToken(data.token);
+      setAuthToken({ token: data.token });
       // console.log(`data`, data);
       handleSubmitLogin(data);
     },
