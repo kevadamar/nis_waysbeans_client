@@ -19,6 +19,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import { useMutation, useQuery } from 'react-query';
 
 import ButtonReuse from '../../components/ButtonReuse';
+import ConfirmDialog from '../../components/ConfirmDialog';
 import { connectSocketIO, loadNotifications } from '../../config';
 import { UserContext } from '../../contexts/UserContext';
 
@@ -74,6 +75,8 @@ const Admin = () => {
   const { state: stateUser } = useContext(UserContext);
 
   const [page, setPage] = useState(0);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
 
   const { isLoading, data, refetch, isSuccess } = useQuery(
     ['transactions', page],
@@ -91,26 +94,22 @@ const Admin = () => {
     },
   });
 
-  const cancelMutation = useMutation(services.updateStatusTransaction, {
-    onSuccess: () => {
-      refetch();
-      loadNotifications({ socket });
-    },
-    onError: (error) => {
-      console.log(error);
-    },
-  });
-
-  const handleApprove = ({ order_id }) => {
-    approveMutation.mutate({ order_id, payload: { status: 'On The Way' } });
+  const handleButton = (status) => {
+    if (status) {
+      approveMutation.mutate({
+        order_id: selectedRow?.id,
+        payload: { status: selectedRow.flag ? 'On The Way' : 'Cancel' },
+      });
+    }
+    setShowModal(false);
   };
 
-  const handleCancel = ({ order_id }) => {
-    cancelMutation.mutate({ order_id, payload: { status: 'Cancel' } });
+  const handleSetOrdered = (row, flag = 1) => {
+    setShowModal(true);
+    setSelectedRow({ ...row, flag });
   };
 
   const handleChangePage = (event, newPage) => {
-    // console.log(event, newPage);
     setPage(newPage);
   };
 
@@ -213,9 +212,7 @@ const Admin = () => {
                                 variant="contained"
                                 color="primary"
                                 style={{ ...btnCancel }}
-                                onClick={() =>
-                                  handleCancel({ order_id: row.id })
-                                }
+                                onClick={() => handleSetOrdered(row, 0)}
                               >
                                 Cancel
                               </ButtonReuse>
@@ -223,9 +220,7 @@ const Admin = () => {
                                 variant="contained"
                                 color="primary"
                                 style={{ ...btnApprove, marginRight: 0 }}
-                                onClick={() =>
-                                  handleApprove({ order_id: row.id })
-                                }
+                                onClick={() => handleSetOrdered(row)}
                               >
                                 Approve
                               </ButtonReuse>
@@ -259,6 +254,14 @@ const Admin = () => {
               onPageChange={handleChangePage}
               // onRowsPerPageChange={handleChangeRowsPerPage}
             />
+            {showModal && (
+              <ConfirmDialog
+                cb={(v) => handleButton(v)}
+                open={showModal}
+                titleBtnFalse="Close"
+                titleBtnTrue="Approve"
+              />
+            )}
           </Paper>
         )}
       </Box>
