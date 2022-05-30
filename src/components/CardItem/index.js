@@ -5,6 +5,7 @@ import {
   CardActionArea,
   CardContent,
   CardMedia,
+  Tooltip,
   Typography,
 } from '@material-ui/core';
 import { cardStyles } from './_cardStyles';
@@ -29,14 +30,16 @@ function CardItem({ item }) {
           height={312}
         />
         <CardContent>
-          <Typography
-            gutterBottom
-            variant="h6"
-            component="h2"
-            className={classes.title}
-          >
-            {item.name}
-          </Typography>
+          <Tooltip title={item.name} followCursor={true}>
+            <Typography
+              gutterBottom
+              variant="h6"
+              component="h2"
+              className={classes.title}
+            >
+              {item.name}
+            </Typography>
+          </Tooltip>
           <Typography
             variant="body2"
             color="textSecondary"
